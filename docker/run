@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+function runDocker
+{
+    local -r dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    local -r projectRoot=$(readlink -f "${dir}/../")
+
+    local -r applicationName=$(cat ${dir}/projectName);
+
+    docker run --rm -v $(pwd):/home/app/src -it ${applicationName} "$@"
+}
+
+runDocker "$@"

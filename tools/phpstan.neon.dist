@@ -1,0 +1,6 @@
+includes:
+     # bleeing edge
+     - '../vendor/phpstan/phpstan/conf/bleedingEdge.neon'
+
+parameters:
+    level: max

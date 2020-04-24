@@ -1,0 +1,8 @@
+# no need as this is a library
+composer.lock
+
+# vendor folder
+vendor
+
+# phpstorm specific cache
+.idea
