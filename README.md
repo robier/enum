@@ -3,15 +3,15 @@ Enums
 
 This is yet another enum implementation in PHP.
 
-This project aims to provide missing enums support with pure PHP without vertical inheritance.
+This project aims to provide missing enum support with pure PHP without vertical inheritance.
 
-**Note:** This enums can not be serialized.
+**Note:** These enums can not be serialized.
 
 I created this library as I got tired of creating enum values as class constants. I think
-it's a bad way. Developer can by mistake compare 2 different enums or compare constants with
-magic number all over the code.
+it's a bad way. Developer can compare 2 different enums by mistake or compare constants with
+magic numbers all over the code.
 
-Let's see the problem in actual code:
+Let's see the problem in the actual code:
 ```php
 <?php
 class UserType {
@@ -28,22 +28,22 @@ class ReviewStatus {
 $result1 = UserType::ADMIN == ReviewStatus::DRAFT; // evaluates to true
 $result2 = UserType::REGULAR === ReviewStatus::PUBLISHED; // evaluates to true
 ```
-This two classes holds same values in some constants (ADMIN & DRAFT and REGULAR & PUBLISHED). We can
-make comparison as shown in snippet above, but we should not ever do that as conceptually that is wrong.
+These two classes hold the same values in some constants (ADMIN & DRAFT and REGULAR & PUBLISHED). We can
+make a comparison as shown in snippet above, but we should not ever do that as it's conceptually wrong.
 UserType does not have any connection to ReviewStatus and vice versa.
 
-Objects can solve this problem really easy that's why this library is created.
+Objects can solve this problem really easy, that's why this library was created.
 
-Types of enum:
+Types of enums:
 - **StringEnum** - constant values must be strings
 - **CharEnum** - constant values must be strings containing only one character
 - **IntegerEnum** - constant values must be integers
 - **UnsignedIntegerEnum** - constant values must be positive integers (zero is also a "positive" integer)
 - **MaskEnum** - enum holding multiple values (bitmask)
 
-**Note:** Values of enum constants must not repeat as this miss the whole point of enums.
+**Note:** Values of enum constants must not repeat.
 
-**Note:** In all enum types all values needs to be unique, if they are not, developer will get validation exception.
+**Note:** In all enum types, every value needs to be unique, if they are not, developer will get a validation exception.
 
 **Note:** Every enum type is validated only once and cached for further use.
 
@@ -66,16 +66,16 @@ final class UserType
 }
 ```
 
-As you can see there is 2 types of magic methods in enum:
+As you can see there are 2 types of magic methods in an enum:
 - factory (`admin()` and `regular()` methods)
-- checkers (`isAdmin()` and `isRegular()` methods)
+- checker (`isAdmin()` and `isRegular()` methods)
 
-Any magic method can be easily overwritten by concrete method.
+Any magic method can be easily overwritten by a concrete method.
 
-If you use names for constants that have multiple words like `FOO_BAR`, magic methods would be cammelCased
+If you use names for constants that have multiple words like `FOO_BAR`, magic methods would be camelCased
 ie. `fooBar` for factory and `isFooBar()` for checker.
 
-**Note**: Constants names in enums **MUST** be defined like UPPER_SNAKE_CASE (it's also a standard in PHP).
+**Note**: Constant names in enums **MUST** be defined like UPPER_SNAKE_CASE (it's also a standard in PHP).
 
 List of handy methods:
 - `static byName(string $name): self`
@@ -90,12 +90,12 @@ List of handy methods:
 - `equal(self $enum): bool`
 - `any(self ...$enums): bool`
 
-Mask enum is special one so there is few more methods in that enum:
+Mask enum is special, so there are a few more methods:
 - `allInOne(self ...$except): self`
 - `contains(self $enum): bool`
 - `containsAll(self ...$enums): bool`
 
-Check methods description for more info.
+Check method descriptions for more info.
 
 ### Examples of usage
 
@@ -126,14 +126,14 @@ UserType::byValue(2); // regular type
 
 ### Guidelines
 
-- Defined constants should not be public but private or protected. So they can not be used
-by developer. Developer should only use methods defined on enum class.
+- Defined constants should not be public but private or protected, so they can not be used
+by developer. Developer should only use methods defined in the enum class.
 - Keep enum definitions small and specific (do not put multiple concerns to one enum)
 - Do not extend your enumerations, ie. make your enums final.
 
 ### Helper functions
 
-There is also few helper functions in `Robier\Enum` namespace:
+There are also a few helper functions in `Robier\Enum` namespace:
 ```
 isEnum(string|object $enum): bool
 getEnumType(string|object $enum): string // can throw Robier\Enum\Exception\NotEnumClass
@@ -144,18 +144,18 @@ isUnsignedIntegerEnum(string|object $enum): bool
 isMaskEnum(string|object $enum): bool
 ```
 
-For more details check comments in file where functions are.
+For more details, check the comments in files where the functions are located.
 
 ### Development
 
-This project is dokerized. 
-Before running tests you need to build docker container by using provided script form docker folder.
+This project is dockerized. 
+Before running tests you need to build a docker container by using provided script from the docker folder.
 
 ```bash
  $ docker/build
 ```
 
-After build is finished you can run any command by using:
+After the build is finished, you can run any command by using:
 
 ```bash
  $ docker/run %command%
@@ -173,4 +173,4 @@ Additional tools for developing:
 - `composer test:infestation` - runs mutation tests and generates mutation score
 - `composer phpstan` - runs phpstan on level 8 for src folder
 
-Fill free to contribute.
+Feel free to contribute.
