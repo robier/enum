@@ -282,6 +282,19 @@ class ExceptionEnumTest extends TestCase
 
         $class::byIndex(999);
     }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs()
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testItThrowsExceptionWhenNegativeIndexProvided(string $class): void
+    {
+        $this->expectException(InvalidEnum::class);
+        $this->expectExceptionMessage(InvalidEnum::negativeIndex($class)->getMessage());
+
+        $class::byIndex(-50);
+    }
+
     /**
      * @dataProvider \Robier\Enum\Test\Unit\InvalidDataProvider::invalidUndefinedEnums()
      */

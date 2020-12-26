@@ -32,4 +32,11 @@ final class InvalidEnum extends InvalidArgumentException implements Exception
 
         return new static($message);
     }
+
+    public static function negativeIndex(string $class): self
+    {
+        $message = sprintf('Constant with negative value is invalid index for enum %s', $class);
+
+        return new static($message);
+    }
 }

@@ -162,6 +162,10 @@ trait StringEnum
     {
         static::setup();
 
+        if ($index < 0) {
+            throw Exception\InvalidEnum::negativeIndex(static::class);
+        }
+
         if (!isset(self::$enumeration['values'][$index])) {
             if (self::$enumeration['undefined']) {
                 return self::$enumeration['undefined']['enum'];
