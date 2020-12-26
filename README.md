@@ -97,6 +97,8 @@ Mask enum is special, so there are a few more methods:
 - `allInOne(self ...$except): self`
 - `contains(self $enum): bool`
 - `containsAll(self ...$enums): bool`
+- `names(): array`
+- does not have `name()` method
 
 Check method descriptions for more info.
 

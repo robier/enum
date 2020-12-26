@@ -373,6 +373,23 @@ trait MaskEnum
     }
 
     /**
+     * Get names contained in current enum.
+     *
+     * @returns Name[]
+     */
+    public function names(): array
+    {
+        $names = [];
+        foreach(self::$enumeration['values'] as $index => $value) {
+            if(0 !== ($this->enumerationValue & $value)) {
+                $names[] = self::$enumeration['names'][$index];
+            }
+        }
+
+        return $names;
+    }
+
+    /**
      * Get random enum
      */
     public static function getRandom(self ...$except): self
