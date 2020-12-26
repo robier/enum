@@ -71,7 +71,14 @@ function error(string $message)
 }
 
 $autoloadFound = false;
-foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php'] as $composerAutoload) {
+$autoloadPossibleLocations = [
+    __DIR__ . '/../../../autoload.php' ,
+    __DIR__ . '/../../autoload.php',
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/vendor/autoload.php'
+];
+
+foreach ($autoloadPossibleLocations as $composerAutoload) {
     if (file_exists($composerAutoload)) {
         require_once $composerAutoload;
         $autoloadFound = true;
