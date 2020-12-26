@@ -241,12 +241,21 @@ trait StringEnum
 
     public function __call($methodName, $arguments)
     {
-        if (strpos($methodName, 'is') !== 0) {
+        $type = null;
+        if (strpos($methodName, 'not') === 0) {
+            $type = 'not';
+        }
+
+        if (strpos($methodName, 'is') === 0) {
+            $type = 'is';
+        }
+
+        if ($type === null) {
             throw Exception\BadMethodCall::instance(static::class, $methodName);
         }
 
         // get enum value
-        $enumName = substr($methodName, 2);
+        $enumName = substr($methodName, strlen($type));
         $enumIndex = null;
 
         /** @var Name $name */
@@ -261,7 +270,11 @@ trait StringEnum
             throw Exception\BadMethodCall::instance(static::class, $methodName);
         }
 
-        return $this->enumerationIndex === $enumIndex;
+        if ($type === 'is') {
+            return $this->enumerationIndex === $enumIndex;
+        }
+
+        return $this->enumerationIndex !== $enumIndex;
     }
 
     /**

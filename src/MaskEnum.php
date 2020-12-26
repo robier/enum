@@ -336,12 +336,21 @@ trait MaskEnum
 
     public function __call($methodName, $arguments)
     {
-        if (strpos($methodName, 'is') !== 0) {
+        $type = null;
+        if (strpos($methodName, 'is') === 0) {
+            $type = 'is';
+        }
+
+        if (strpos($methodName, 'not') === 0) {
+            $type = 'not';
+        }
+
+        if ($type === null) {
             throw Exception\BadMethodCall::instance(static::class, $methodName);
         }
 
         // get enum value
-        $enumName = substr($methodName, 2);
+        $enumName = substr($methodName, strlen($type));
         $enumIndex = null;
 
         /** @var Name $name */
@@ -356,7 +365,11 @@ trait MaskEnum
             throw Exception\BadMethodCall::instance(static::class, $methodName);
         }
 
-        return 0 !== ($this->enumerationValue & static::$enumeration['values'][$enumIndex]);
+        if ($type === 'is') {
+            return 0 !== ($this->enumerationValue & static::$enumeration['values'][$enumIndex]);
+        }
+
+        return 0 === ($this->enumerationValue & static::$enumeration['values'][$enumIndex]);
     }
 
     /**

@@ -28,8 +28,9 @@ use Robier\Enum\Test\Data\UnsignedIntegers\ValidUnsignedIntegerEnum;
  * @covers \Robier\Enum\UnsignedIntegerEnum
  * @covers \Robier\Enum\MaskEnum
  * @covers \Robier\Enum\Feature\Undefined
+ * @runTestsInSeparateProcesses
  */
-class ExceptionEnumTest extends TestCase
+final class ExceptionEnumTest extends TestCase
 {
     /**
      * @dataProvider \Robier\Enum\Test\Unit\InvalidDataProvider::invalidInstanceMethods()
@@ -221,8 +222,7 @@ class ExceptionEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs()
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validMaskEnumNameAndValuePairs()
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidConstantNameAndValuePairs()
      */
     public function testItThrowsExceptionWhenEnumIsCloned(string $class): void
     {
@@ -235,8 +235,7 @@ class ExceptionEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs()
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validMaskEnumNameAndValuePairs()
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidConstantNameAndValuePairs()
      */
     public function testItThrowsExceptionWhenAllPossibilitiesAreExcluded(string $class): void
     {
@@ -247,8 +246,7 @@ class ExceptionEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs()
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validMaskEnumNameAndValuePairs()
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidConstantNameAndValuePairs()
      */
     public function testItThrowsExceptionWhenEnumIsSerialized(string $class): void
     {

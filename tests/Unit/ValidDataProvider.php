@@ -205,20 +205,6 @@ final class ValidDataProvider
         }
     }
 
-    public static function validIsMethods(): Generator
-    {
-        foreach (static::allValidConstantNameAndValuePairs() as $item) {
-            $name = Name::resolve($item[1]);
-
-            yield [
-                $item[0],
-                $name->upperSnakeCase(),
-                'is' . $name->pascalCase(),
-                $item[2],
-            ];
-        }
-    }
-
     public static function allValidValues(): Generator
     {
         $currentName = null;

@@ -9,6 +9,7 @@ use Robier\Enum\CharEnum;
 use Robier\Enum\Feature\Undefined;
 use Robier\Enum\IntegerEnum;
 use Robier\Enum\MaskEnum;
+use Robier\Enum\Name;
 use Robier\Enum\StringEnum;
 use function Robier\Enum\isCharEnum;
 use function Robier\Enum\isIntegerEnum;
@@ -73,14 +74,44 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validIsMethods
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidConstantNameAndValuePairs()
      */
-    public function testCheckers(string $className, string $name, string $isMethod): void
+    public function testIsChecker(string $className, string $name): void
     {
         /** @var IntegerEnum|StringEnum|CharEnum $enum */
         $enum = $className::byName($name);
+        $isMethod = 'is' . Name::resolve($name)->pascalCase();
 
         $this->assertTrue($enum->{$isMethod}());
+
+        /** @var IntegerEnum[]|StringEnum[]|CharEnum[] $all */
+        $all = $className::all($enum);
+        foreach($all as $itemEnum) {
+            $name = isMaskEnum($itemEnum) ? $itemEnum->names()[0] : $itemEnum->name();
+            $isMethodName = 'is' . $name->pascalCase();
+
+            $this->assertFalse($enum->{$isMethodName}());
+        }
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidConstantNameAndValuePairs()
+     */
+    public function testNotChecker(string $className, string $name): void
+    {
+        /** @var IntegerEnum|StringEnum|CharEnum $enum */
+        $enum = $className::byName($name);
+        $notMethod = 'not' . Name::resolve($name)->pascalCase();
+
+        $this->assertFalse($enum->{$notMethod}());
+
+        /** @var IntegerEnum[]|StringEnum[]|CharEnum[] $all */
+        $all = $className::all($enum);
+        foreach($all as $itemEnum) {
+            $name = isMaskEnum($itemEnum) ? $itemEnum->names()[0] : $itemEnum->name();
+            $notMethodName = 'not' . $name->pascalCase();
+            $this->assertTrue($enum->{$notMethodName}());
+        }
     }
 
     /**

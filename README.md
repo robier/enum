@@ -53,9 +53,12 @@ Let's look at one integer enum.
 
 /**
  * @method static self admin()
- * @method static self regular()
  * @method bool isAdmin()
+ * @method bool notAdmin()
+ * 
+ * @method static self regular()
  * @method bool isRegular()
+ * @method bool notRegular()
  */
 final class UserType
 {
@@ -68,12 +71,12 @@ final class UserType
 
 As you can see there are 2 types of magic methods in an enum:
 - factory (`admin()` and `regular()` methods)
-- checker (`isAdmin()` and `isRegular()` methods)
+- checkers (`isAdmin()`,`isRegular()`, `notAdmin()`, `notRegular()` methods)
 
 Any magic method can be easily overwritten by a concrete method.
 
 If you use names for constants that have multiple words like `FOO_BAR`, magic methods would be camelCased
-ie. `fooBar` for factory and `isFooBar()` for checker.
+ie. `fooBar` for factory and `isFooBar()`/`notFooBar()` for checker.
 
 **Note**: Constant names in enums **MUST** be defined like UPPER_SNAKE_CASE (it's also a standard in PHP).
 
@@ -100,11 +103,14 @@ Check method descriptions for more info.
 ### Examples of usage
 
 ```php
+<?php
 $userType = UserType::admin();
 
 // check user type
 $userType->isAdmin();
 $userType->isRegular();
+$userType->notAdmin();
+$userType->notRegular();
 
 // check user type with another instance of UserType enum
 $userType->equal(UserType::regular());
