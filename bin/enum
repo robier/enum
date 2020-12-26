@@ -1,0 +1,102 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types = 1);
+
+function generateDocBlock(string $className): string
+{
+    $reflection = new ReflectionClass($className);
+    $constants = $reflection->getConstants();
+
+    $declarations = [];
+    foreach($constants as $constantName => $value) {
+        $name = \Robier\Enum\Name::resolve($constantName);
+        $camelCaseName = $name->camelCase();
+        $pascalCaseName = $name->pascalCase();
+
+        $declaration = " * @method static self $camelCaseName()";
+
+        foreach (["is$pascalCaseName", "not$pascalCaseName"] as $methodName) {
+            if(!$reflection->hasMethod($methodName)) {
+                $declaration .= "\n * @method bool $methodName()";
+            }
+        }
+
+        $declarations[] = $declaration;
+    }
+
+    $docBlocks = <<<DOCS
+/**
+
+DOCS;
+
+    // add new line between groups of declaration
+    $docBlocks .= implode("\n *\n", $declarations);
+
+    $docBlocks .= <<<DOSC
+
+ */
+
+DOSC;
+
+    return $docBlocks;
+}
+
+function help($scriptName): string
+{
+    $docBlock = generateDocBlock(\Robier\Enum\Test\Data\Integers\ValidIntegerEnum::class);
+
+    return <<<HELP
+Leverage your IDE autocomplete support by adding DocBlock to your enums! 
+Generate grouped enum DocBlocks by providing path and enum full namespace.
+
+./$scriptName "<full_namespace_with_enum_name>"
+
+Note: Full namespace needs to be enclosed in quotes.
+
+For example:
+
+./$scriptName "\Robier\Enum\Test\Data\Integers\ValidIntegerEnum"  
+
+You will get output that you will need to manually put before class declaration, ie.:
+
+$docBlock
+
+HELP;
+}
+
+function error(string $message)
+{
+    fwrite(STDERR, $message);
+}
+
+$autoloadFound = false;
+foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php'] as $composerAutoload) {
+    if (file_exists($composerAutoload)) {
+        require_once $composerAutoload;
+        $autoloadFound = true;
+        break;
+    }
+}
+
+if (!$autoloadFound) {
+    error("Could not require composer autoload");
+    exit(2);
+}
+
+$className = null;
+if (isset($argv[1])) {
+    $className = $argv[1];
+}
+
+if($className === null) {
+    error(help($argv[0]));
+    exit(3);
+}
+
+if (!class_exists($className)) {
+    error("Class $className could not be found inside project");
+    exit(5);
+}
+
+echo generateDocBlock($className);

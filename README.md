@@ -212,6 +212,8 @@ try {
 by developer. Developer should only use methods defined in the enum class.
 - Keep enum definitions small and specific (do not put multiple concerns to one enum)
 - Do not extend your enumerations, ie. make your enums final.
+- Do not combine different data types of constant values in one enum.
+- Group enum methods together by name, so you have all methods from one name in one spot (use bin/enum to generate DocBlock).
 
 ### Helper functions
 
@@ -227,6 +229,38 @@ isMaskEnum(string|object $enum): bool
 ```
 
 For more details, check the comments in files where the functions are located.
+
+### DockBlocks
+
+Let's say you have enum with all countries inside Europe Union. There is ATM 27 countries, you want to have all enum
+methods witten inside DocBlock of your enum, so you can leverage IDE autocompletion. As it's 3 methods per country we
+get total of 81 method that we need to write inside our DocBlock. You can easily generate all of them just by providing
+FQN of enum to enum CLI script. It will generate in standard output all possible methods.
+
+```bash
+./vendor/bin/enum "\Robier\Enum\Test\Data\Integers\ValidIntegerEnum"
+```
+
+Would generate: 
+```text
+/**
+ * @method static self one()
+ * @method bool isOne()
+ * @method bool notOne()
+ *
+ * @method static self oneTwo()
+ * @method bool isOneTwo()
+ * @method bool notOneTwo()
+ *
+ * @method static self oneTwoThree()
+ * @method bool isOneTwoThree()
+ * @method bool notOneTwoThree()
+ */
+```
+
+You need to copy/paste that DocBlock before enum class declaration inside file.
+
+**Note:** It will not generate DocBlock if method is defined inside class.
 
 ### Development
 

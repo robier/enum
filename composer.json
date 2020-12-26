@@ -39,5 +39,8 @@
     "test:coverage:html": "@test --coverage-html ./tools/coverage",
     "phpstan": "phpstan analyse --configuration ./tools/phpstan.neon.dist --level 8 src",
     "test:infestation": "infection run --configuration ./tools/infection.json.dist --show-mutations --ansi"
-  }
+  },
+  "bin": [
+    "bin/enum"
+  ]
 }
