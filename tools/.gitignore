@@ -1,2 +1,5 @@
 # coverage directory
 coverage
+
+# phpunit cache file
+.phpunit.result.cache
