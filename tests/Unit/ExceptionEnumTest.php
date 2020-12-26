@@ -4,12 +4,14 @@ declare(strict_types = 1);
 
 namespace Robier\Enum\Test\Unit;
 
+use Generator;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Robier\Enum\Exception\BadMethodCall;
 use Robier\Enum\Exception\InvalidEnum;
 use Robier\Enum\Exception\InvalidRandom;
 use Robier\Enum\Exception\NoConstantsDefined;
+use Robier\Enum\Exception\NotEnumClass;
 use Robier\Enum\Exception\Validation;
 use Robier\Enum\IntegerEnum;
 use Robier\Enum\StringEnum;
@@ -289,5 +291,23 @@ class ExceptionEnumTest extends TestCase
         $this->expectExceptionMessage(Validation::undefinedConstDefined($class)->getMessage());
 
         $class::byIndex(999);
+    }
+
+    public function provideAllExceptions(): Generator
+    {
+        yield [BadMethodCall::class];
+        yield [InvalidEnum::class];
+        yield [InvalidRandom::class];
+        yield [NoConstantsDefined::class];
+        yield [NotEnumClass::class];
+        yield [Validation::class];
+    }
+
+    /**
+     * @dataProvider provideAllExceptions()
+     */
+    public function testAllExceptionsHaveExceptionInterfaceImplemented(string $exception): void
+    {
+        $this->assertTrue(is_subclass_of($exception, \Robier\Enum\Exception::class));
     }
 }

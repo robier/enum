@@ -5,8 +5,9 @@ declare(strict_types = 1);
 namespace Robier\Enum\Exception;
 
 use InvalidArgumentException;
+use Robier\Enum\Exception;
 
-final class InvalidRandom extends InvalidArgumentException
+final class InvalidRandom extends InvalidArgumentException implements Exception
 {
     public function __construct()
     {

@@ -5,9 +5,10 @@ declare(strict_types = 1);
 namespace Robier\Enum\Exception;
 
 use Exception;
+use Robier\Enum\Exception as ExceptionInterface;
 use Robier\Enum\Feature\Undefined;
 
-final class Validation extends Exception
+final class Validation extends Exception implements ExceptionInterface
 {
     public function __construct(string $message)
     {

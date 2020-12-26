@@ -183,6 +183,21 @@ $userType->notAdmin(); // true
 $userType->isRegular(); // false
 $userType->notRegular(); // true
 ```
+
+### Error handling
+
+All exception thrown from this library has implemented interface `Robier\Enum\Exception` for easier error handling.
+
+```php
+<?php
+
+try {
+    UserType::byIndex(-5);
+} catch (\Robier\Enum\Exception $exception) {
+    // catch all exceptions thrown by enums
+}
+```
+
 ### Guidelines
 
 - Defined constants should not be public but private or protected, so they can not be used

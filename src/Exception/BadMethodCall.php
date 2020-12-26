@@ -5,8 +5,9 @@ declare(strict_types = 1);
 namespace Robier\Enum\Exception;
 
 use BadMethodCallException;
+use Robier\Enum\Exception;
 
-final class BadMethodCall extends BadMethodCallException
+final class BadMethodCall extends BadMethodCallException implements Exception
 {
     public static function static(string $class, string $name): self
     {

@@ -5,9 +5,10 @@ declare(strict_types = 1);
 namespace Robier\Enum\Exception;
 
 use Exception;
+use Robier\Enum\Exception as ExceptionInterface;
 use Throwable;
 
-final class NotEnumClass extends Exception
+final class NotEnumClass extends Exception implements ExceptionInterface
 {
     /**
      * @var string

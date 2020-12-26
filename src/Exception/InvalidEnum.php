@@ -5,8 +5,9 @@ declare(strict_types = 1);
 namespace Robier\Enum\Exception;
 
 use InvalidArgumentException;
+use Robier\Enum\Exception;
 
-final class InvalidEnum extends InvalidArgumentException
+final class InvalidEnum extends InvalidArgumentException implements Exception
 {
     public static function name(string $class, string $name): self
     {
