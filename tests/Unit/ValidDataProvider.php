@@ -121,10 +121,77 @@ final class ValidDataProvider
         ];
     }
 
+    public static function validUndefinedEnumNameAndValuePairs(): Generator
+    {
+        yield [
+            Data\Strings\ValidUndefinedStringEnum::class,
+            'ONE',
+            'one text',
+            0,
+        ];
+
+        yield [
+            Data\Strings\ValidUndefinedStringEnum::class,
+            'ONE_TWO',
+            'one two text',
+            1,
+        ];
+
+        yield [
+            Data\Strings\ValidUndefinedStringEnum::class,
+            'ONE_TWO_THREE',
+            'one two three text',
+            2,
+        ];
+
+        yield [
+            Data\Integers\ValidUndefinedIntegerEnum::class,
+            'ONE',
+            1,
+            0,
+        ];
+
+        yield [
+            Data\Integers\ValidUndefinedIntegerEnum::class,
+            'ONE_TWO',
+            2,
+            1,
+        ];
+
+        yield [
+            Data\Integers\ValidUndefinedIntegerEnum::class,
+            'ONE_TWO_THREE',
+            3,
+            2,
+        ];
+
+        yield [
+            Data\Chars\ValidUndefinedCharEnum::class,
+            'ONE',
+            'a',
+            0,
+        ];
+
+        yield [
+            Data\Chars\ValidUndefinedCharEnum::class,
+            'ONE_TWO',
+            'b',
+            1,
+        ];
+
+        yield [
+            Data\Chars\ValidUndefinedCharEnum::class,
+            'ONE_TWO_THREE',
+            'c',
+            2,
+        ];
+    }
+
     public static function allValidConstantNameAndValuePairs(): Generator
     {
         yield from self::validConstantNameAndValuePairs();
         yield from self::validMaskEnumNameAndValuePairs();
+        yield from self::validUndefinedEnumNameAndValuePairs();
     }
 
     public static function validStaticFactories(): Generator

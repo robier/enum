@@ -124,6 +124,65 @@ UserType::byValue(1); // admin type
 UserType::byValue(2); // regular type
 ```
 
+### Features
+With features, you can change enum default behaviour.
+
+#### Undefined
+
+By default, enums will throw an exception if you try to create one by non-existing name/value/index.
+When using **Undefined** gadget enum will allow not-existing name/value/index. Enum will be in undefined
+state. Handy if you have some legacy system that can give enum values you do not care about. Or even if 
+you are using getters, so every time you call a getter, you get a genuine object even you do not have
+real value yet.
+
+**Note**: Two undefined enums are never equal, as they have undetermined value!
+
+**Note**: Name of undefined enum will be `UNDEFINED`.
+
+**Note**: When using Undefined feature, you can not have constant with name `UNDEFINED`, it will throw an exception.
+
+**Note**: Two undefined enums are same objects because of cache, but semantically they are not. When you are using equal() method it will return false if any or both enums are undefined. 
+
+It brings few handy methods:
+- `static undefined(): static` - creates undefined enum
+- `isUndefined(): bool` - check if current instance **is** undefined one
+- `notUndefined(): bool` - check if current instance **is not** undefined one
+
+How to implement:
+
+```php
+<?php
+
+/**
+ * @method static self admin()
+ * @method bool isAdmin()
+ * @method bool notAdmin()
+ * 
+ * @method static self regular()
+ * @method bool isRegular()
+ * @method bool notRegular()
+ */
+final class UserType
+{
+    use \Robier\Enum\IntegerEnum;
+    use \Robier\Enum\Feature\Undefined;
+    
+    private const ADMIN = 1;
+    private const REGULAR = 2;
+}
+```
+
+How to use:
+```php
+<?php
+$userType = UserType::undefined(); // UserType instance
+$userType->isUndefined(); // true
+$userType->notUndefined(); // false
+$userType->isAdmin(); // false
+$userType->notAdmin(); // true
+$userType->isRegular(); // false
+$userType->notRegular(); // true
+```
 ### Guidelines
 
 - Defined constants should not be public but private or protected, so they can not be used

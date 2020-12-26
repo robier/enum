@@ -20,6 +20,10 @@ trait IntegerEnum
         $index = array_search($value, self::$enumeration['values'], true);
 
         if (false === $index) {
+            if (self::$enumeration['undefined']) {
+                return self::$enumeration['undefined']['enum'];
+            }
+
             throw Exception\InvalidEnum::value(static::class, $value);
         }
 
@@ -31,6 +35,10 @@ trait IntegerEnum
      */
     public function value(): int
     {
+        if (static::$enumeration['undefined'] && $this->enumerationIndex === -1) {
+            return 0;
+        }
+
         return static::$enumeration['values'][$this->enumerationIndex];
     }
 
@@ -59,6 +67,10 @@ trait IntegerEnum
                     gettype($constraintValue),
                     'integer'
                 );
+            }
+
+            if (self::$enumeration['undefined'] && self::$enumeration['undefined']['name']->isSame($name)) {
+                throw Exception\Validation::undefinedConstDefined(static::class);
             }
         }
 

@@ -25,6 +25,7 @@ use Robier\Enum\Test\Data\UnsignedIntegers\ValidUnsignedIntegerEnum;
  * @covers \Robier\Enum\IntegerEnum
  * @covers \Robier\Enum\UnsignedIntegerEnum
  * @covers \Robier\Enum\MaskEnum
+ * @covers \Robier\Enum\Feature\Undefined
  */
 class ExceptionEnumTest extends TestCase
 {
@@ -276,6 +277,16 @@ class ExceptionEnumTest extends TestCase
     {
         $this->expectException(InvalidEnum::class);
         $this->expectExceptionMessage(InvalidEnum::index($class, 999)->getMessage());
+
+        $class::byIndex(999);
+    }
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\InvalidDataProvider::invalidUndefinedEnums()
+     */
+    public function testItThrowsExceptionWhenUndefinedConstantDefined(string $class): void
+    {
+        $this->expectException(Validation::class);
+        $this->expectExceptionMessage(Validation::undefinedConstDefined($class)->getMessage());
 
         $class::byIndex(999);
     }

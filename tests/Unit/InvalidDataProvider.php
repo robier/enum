@@ -7,10 +7,12 @@ namespace Robier\Enum\Test\Unit;
 use Generator;
 use Robier\Enum\Test\Data\Chars\BadTypeCharEnumValues;
 use Robier\Enum\Test\Data\Chars\DuplicatedCharEnumValues;
+use Robier\Enum\Test\Data\Chars\InvalidUndefinedCharEnum;
 use Robier\Enum\Test\Data\Chars\NoConstantsDefinedCharEnum;
 use Robier\Enum\Test\Data\Chars\ValidCharEnum;
 use Robier\Enum\Test\Data\Integers\BadTypeIntegerEnumValues;
 use Robier\Enum\Test\Data\Integers\DuplicatedIntegerEnumValues;
+use Robier\Enum\Test\Data\Integers\InvalidUndefinedIntegerEnum;
 use Robier\Enum\Test\Data\Integers\NoConstantsDefinedIntegerEnum;
 use Robier\Enum\Test\Data\Masks\BadTypeMaskEnumValues;
 use Robier\Enum\Test\Data\Masks\DuplicatedMaskEnumValues;
@@ -19,6 +21,7 @@ use Robier\Enum\Test\Data\Integers\ValidIntegerEnum;
 use Robier\Enum\Test\Data\Masks\ValidMaskEnum;
 use Robier\Enum\Test\Data\Strings\BadTypeStringEnumValues;
 use Robier\Enum\Test\Data\Strings\DuplicatedStringEnumValues;
+use Robier\Enum\Test\Data\Strings\InvalidUndefinedStringEnum;
 use Robier\Enum\Test\Data\Strings\NoConstantsDefinedStringEnum;
 use Robier\Enum\Test\Data\Strings\ValidStringEnum;
 use Robier\Enum\Test\Data\UnsignedIntegers\BadTypeUnsignedIntegerEnumValues;
@@ -141,5 +144,14 @@ final class InvalidDataProvider
         yield [NoConstantsDefinedCharEnum::class];
 
         yield [NoConstantsDefinedMaskEnum::class];
+    }
+
+    public function invalidUndefinedEnums(): Generator
+    {
+        yield [InvalidUndefinedStringEnum::class];
+
+        yield [InvalidUndefinedIntegerEnum::class];
+
+        yield [InvalidUndefinedCharEnum::class];
     }
 }

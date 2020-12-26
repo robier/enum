@@ -6,15 +6,22 @@ namespace Robier\Enum\Test\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Robier\Enum\CharEnum;
+use Robier\Enum\Feature\Undefined;
 use Robier\Enum\IntegerEnum;
 use Robier\Enum\MaskEnum;
 use Robier\Enum\StringEnum;
+use function Robier\Enum\isCharEnum;
+use function Robier\Enum\isIntegerEnum;
+use function Robier\Enum\isMaskEnum;
+use function Robier\Enum\isStringEnum;
+use function Robier\Enum\isUnsignedIntegerEnum;
 
 /**
  * @covers \Robier\Enum\StringEnum
  * @covers \Robier\Enum\CharEnum
  * @covers \Robier\Enum\IntegerEnum
  * @covers \Robier\Enum\MaskEnum
+ * @covers \Robier\Enum\Feature\Undefined
  * @runTestsInSeparateProcesses
  */
 class ValidEnumTest extends TestCase
@@ -225,5 +232,140 @@ class ValidEnumTest extends TestCase
         $enum2 = $class::byName($name);
 
         $this->assertSame($enum1, $enum2);
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testItReturnsUndefinedEnumObjectWhenNotExistingIndexProvided(string $class): void
+    {
+        /** @var Undefined $enum */
+        $enum = $class::byIndex(1000);
+
+        $this->assertTrue($enum->isUndefined());
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testItReturnsUndefinedEnumObjectWhenNotExistingNameProvided(string $class): void
+    {
+        /** @var Undefined $enum */
+        $enum = $class::byName('not-existing-name');
+
+        $this->assertTrue($enum->isUndefined());
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testItReturnsUndefinedEnumObjectWhenNotExistingValueProvided(string $class): void
+    {
+        /** @var Undefined $enum */
+        if (isStringEnum($class)) {
+            $enum = $class::byValue('not-existing-name');
+        }
+
+        if (isCharEnum($class)) {
+            $enum = $class::byValue('X');
+        }
+
+        if (isIntegerEnum($class)) {
+            $enum = $class::byValue(10000);
+        }
+
+        if (isUnsignedIntegerEnum($class)) {
+            $enum = $class::byValue(10000);
+        }
+
+        if (!isset($enum)) {
+            $this->fail('Provided enum type not covered in test');
+        }
+
+        $this->assertTrue($enum->isUndefined());
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testUndefinedFactoryWorking(string $class): void
+    {
+        /** @var Undefined $enum */
+        $enum = $class::undefined();
+
+        $this->assertTrue($enum->isUndefined());
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testTwoUndefinedEnumsAreNotEqual(string $class): void
+    {
+        /** @var Undefined $enum1 */
+        /** @var Undefined $enum2 */
+        $enum1 = $class::undefined();
+        $enum2 = $class::undefined();
+
+        $this->assertFalse($enum1->equal($enum2));
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testOneUndefinedEnumIsNotEqualToOthers(string $class, string $name): void
+    {
+        /** @var Undefined $enum1 */
+        /** @var Undefined $enum2 */
+        $enum1 = $class::byName($name);
+        $enum2 = $class::undefined();
+
+        $this->assertFalse($enum1->equal($enum2));
+        $this->assertFalse($enum2->equal($enum1));
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testUndefinedEnumIsNotUndefinedIfCreatedProperly(string $class, string $name): void
+    {
+        /** @var Undefined $enum */
+        $enum = $class::byName($name);
+
+        $this->assertFalse($enum->isUndefined());
+        $this->assertTrue($enum->notUndefined());
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testUndefinedEnumWillReturnEmptyValue(string $class): void
+    {
+        /** @var Undefined $enum */
+        $enum = $class::byName('un-defined-name');
+
+        $this->assertEmpty($enum->value());
+
+        if (isCharEnum($enum) || isStringEnum($enum)) {
+            $this->assertSame('', $enum->value());
+            return;
+        }
+
+        if (isIntegerEnum($enum) || isUnsignedIntegerEnum($enum)) {
+            $this->assertSame(0, $enum->value());
+            return;
+        }
+
+        $this->fail('Could not test enum ' . $class);
+    }
+
+    /**
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
+     */
+    public function testUndefinedEnumWillReturnName(string $class): void
+    {
+        /** @var Undefined $enum */
+        $enum = $class::byName('un-defined-name');
+
+        $this->assertSame('UNDEFINED', (string)$enum->name());
     }
 }

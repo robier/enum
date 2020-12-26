@@ -7,6 +7,7 @@ namespace Robier\Enum;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionClass;
+use Robier\Enum\Feature\Undefined;
 
 trait StringEnum
 {
@@ -15,6 +16,7 @@ trait StringEnum
      */
     private static $enumeration = [
         'initialized' => false,
+        'undefined' => null,
         'values' => [],
         'names' => [],
         'cache' => [],
@@ -45,11 +47,20 @@ trait StringEnum
 
         static::$enumeration['initialized'] = true;
 
-        $constants = (new ReflectionClass(static::class))
+        $reflection = new ReflectionClass(static::class);
+
+        $constants = $reflection
             ->getConstants();
 
         if (empty($constants)) {
             throw new Exception\NoConstantsDefined(static::class);
+        }
+
+        if (in_array(Undefined::class, $reflection->getTraitNames())) {
+            static::$enumeration['undefined'] = [
+                'name' => new Name('UNDEFINED', 'UNDEFINED'),
+                'enum' => new static(-1),
+            ];
         }
 
         static::validateConstraints($constants);
@@ -75,6 +86,10 @@ trait StringEnum
                 throw Exception\Validation::unexpectedConstantType(
                     static::class, $name, gettype($constraint), 'string'
                 );
+            }
+
+            if (self::$enumeration['undefined'] && self::$enumeration['undefined']['name']->isSame($name)) {
+                throw Exception\Validation::undefinedConstDefined(static::class);
             }
         }
 
@@ -104,6 +119,10 @@ trait StringEnum
         }
 
         if (null === $enumIndex) {
+            if (self::$enumeration['undefined']) {
+                return self::$enumeration['undefined']['enum'];
+            }
+
             throw Exception\InvalidEnum::name(static::class, $name);
         }
 
@@ -123,6 +142,10 @@ trait StringEnum
         $index = array_search($value, self::$enumeration['values']);
 
         if (false === $index) {
+            if (self::$enumeration['undefined']) {
+                return self::$enumeration['undefined']['enum'];
+            }
+
             throw Exception\InvalidEnum::value(static::class, $value);
         }
 
@@ -140,6 +163,10 @@ trait StringEnum
         static::setup();
 
         if (!isset(self::$enumeration['values'][$index])) {
+            if (self::$enumeration['undefined']) {
+                return self::$enumeration['undefined']['enum'];
+            }
+
             throw Exception\InvalidEnum::index(static::class, $index);
         }
 
@@ -238,6 +265,10 @@ trait StringEnum
      */
     public function name(): Name
     {
+        if (static::$enumeration['undefined'] && $this->enumerationIndex === -1) {
+            return static::$enumeration['undefined']['name'];
+        }
+
         return static::$enumeration['names'][$this->enumerationIndex];
     }
 
@@ -260,6 +291,10 @@ trait StringEnum
      */
     public function value(): string
     {
+        if (static::$enumeration['undefined'] && $this->enumerationIndex === -1) {
+            return '';
+        }
+
         return static::$enumeration['values'][$this->enumerationIndex];
     }
 
@@ -300,6 +335,14 @@ trait StringEnum
      */
     public function equal(self $enum): bool
     {
+        if (static::$enumeration['undefined'] && $this->enumerationIndex === -1) {
+            return false;
+        }
+
+        if (static::$enumeration['undefined'] && $enum->enumerationIndex === -1) {
+            return false;
+        }
+
         return $this->enumerationIndex === $enum->enumerationIndex;
     }
 

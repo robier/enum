@@ -6,6 +6,7 @@ namespace Robier\Enum;
 
 use LogicException;
 use ReflectionClass;
+use Robier\Enum\Feature\Undefined;
 
 trait MaskEnum
 {
@@ -14,6 +15,7 @@ trait MaskEnum
      */
     private static $enumeration = [
         'initialized' => false,
+        'undefined' => null,
         'values' => [],
         'names' => [],
         'all' => 0,
@@ -27,8 +29,12 @@ trait MaskEnum
     /**
      * @throws Exception\Validation
      */
-    protected function __construct(int $value)
+    protected function __construct(?int $value)
     {
+        if (null === $value) {
+            return;
+        }
+
         // validate value
         if ($value < 0) {
             throw new Exception\Validation(
@@ -65,11 +71,20 @@ trait MaskEnum
 
         static::$enumeration['initialized'] = true;
 
-        $constants = (new ReflectionClass(static::class))
+        $reflection = new ReflectionClass(static::class);
+
+        $constants = $reflection
             ->getConstants();
 
         if (empty($constants)) {
             throw new Exception\NoConstantsDefined(static::class);
+        }
+
+        if (in_array(Undefined::class, $reflection->getTraitNames())) {
+            static::$enumeration['undefined'] = [
+                'name' => new Name('UNDEFINED', 'UNDEFINED'),
+                'enum' => new static(null),
+            ];
         }
 
         static::validateConstraints($constants);
@@ -93,13 +108,17 @@ trait MaskEnum
     protected static function validateConstraints(array $constraints): void
     {
         foreach ($constraints as $name => $constraint) {
-            if (false === is_integer($constraint)) {
+            if (false === is_int($constraint)) {
                 throw Exception\Validation::unexpectedConstantType(
                     static::class,
                     $name,
                     gettype($constraint),
                     'integer'
                 );
+            }
+
+            if (self::$enumeration['undefined'] && self::$enumeration['undefined']['name']->isSame($name)) {
+                throw Exception\Validation::undefinedConstDefined(static::class);
             }
         }
 
@@ -183,6 +202,10 @@ trait MaskEnum
      */
     public function value(): int
     {
+        if (static::$enumeration['undefined'] && null === $this->enumerationValue) {
+            return 0;
+        }
+
         return $this->enumerationValue;
     }
 
@@ -191,6 +214,14 @@ trait MaskEnum
      */
     public function equal(self $enum): bool
     {
+        if (static::$enumeration['undefined'] && null === $this->enumerationValue) {
+            return false;
+        }
+
+        if (static::$enumeration['undefined'] && null === $enum->enumerationValue) {
+            return false;
+        }
+
         return $this->value() === $enum->value();
     }
 
@@ -199,6 +230,14 @@ trait MaskEnum
      */
     public function contains(self $enum): bool
     {
+        if (static::$enumeration['undefined'] && null === $this->enumerationValue) {
+            return false;
+        }
+
+        if (static::$enumeration['undefined'] && null === $enum->enumerationValue) {
+            return false;
+        }
+
         return (bool)($this->value() & $enum->value());
     }
 
