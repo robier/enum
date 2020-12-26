@@ -25,11 +25,10 @@ use function Robier\Enum\isUnsignedIntegerEnum;
  * @covers \Robier\Enum\Feature\Undefined
  * @runTestsInSeparateProcesses
  */
-class ValidEnumTest extends TestCase
+final class ValidEnumTest extends TestCase
 {
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validMaskEnumNameAndValuePairs
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidConstantNameAndValuePairs
      */
     public function testItWillReturnEnumIfValidNameProvidedToFactoryMethod(string $enumName, string $name, $value): void
     {
@@ -40,7 +39,8 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs()
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
      */
     public function testItWillReturnEnumIfValidValueProvidedToFactoryMethod(string $enumName, string $name, $value): void
     {
@@ -51,8 +51,7 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validMaskEnumNameAndValuePairs
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidConstantNameAndValuePairs()
      */
     public function testItWillReturnEnumIfValidIndexProvidedToFactoryMethod(string $enumName, string $name, $value, int $index): void
     {
@@ -63,7 +62,7 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validStaticFactories
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validStaticFactories()
      */
     public function testValidMagicFactories(string $enumName, string $method, $value): void
     {
@@ -115,7 +114,7 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidValues
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidValues()
      */
     public function testGettingAllValues(string $className, array $values): void
     {
@@ -126,7 +125,7 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidNames
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allValidNames()
      */
     public function testGettingAllNames(string $className, array $names): void
     {
@@ -137,7 +136,7 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allEnumerations
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allEnumerations()
      */
     public function testGettingAllEnumerations(string $className, array $allNames): void
     {
@@ -152,7 +151,7 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allEnumerationsExceptOne
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allEnumerationsExceptOne()
      */
     public function testGettingSomeEnumerations(string $className, array $expected, array $exclude): void
     {
@@ -255,7 +254,8 @@ class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validConstantNameAndValuePairs()
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::validUndefinedEnumNameAndValuePairs()
      */
     public function testItReturnsAlwaysSameEnumObjectInstance(string $class, string $name): void
     {

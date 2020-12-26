@@ -12,6 +12,7 @@ use Robier\Enum\Test\Data\StringCaseType;
 
 /**
  * @covers \Robier\Enum\Name
+ * @runTestsInSeparateProcesses
  */
 class NameTest extends TestCase
 {
