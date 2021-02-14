@@ -16,10 +16,21 @@ trait StringEnum
      */
     private static $enumeration = [
         'initialized' => false,
-        'undefined' => null,
         'values' => [],
         'names' => [],
         'cache' => [],
+        // available features that can be enabled by using trait
+        'features' => [
+            Undefined::class => false,
+        ],
+        // some features will have some additional data, all additional data
+        // should go in this array, key needs to be feature name
+        'data' => [
+            Undefined::class => [
+                'name' => null,
+                'enum' => null,
+            ],
+        ],
     ];
 
     /**
@@ -56,8 +67,13 @@ trait StringEnum
             throw new Exception\NoConstantsDefined(static::class);
         }
 
-        if (in_array(Undefined::class, $reflection->getTraitNames())) {
-            static::$enumeration['undefined'] = [
+        $usedTraits = $reflection->getTraitNames();
+        foreach(self::$enumeration['features'] as $feature => $_) {
+            self::$enumeration['features'][$feature] = in_array($feature, $usedTraits, true);
+        }
+
+        if (self::hasFeature(Undefined::class)) {
+            static::$enumeration['data'][Undefined::class] = [
                 'name' => new Name('UNDEFINED', 'UNDEFINED'),
                 'enum' => new static(-1),
             ];
@@ -74,6 +90,18 @@ trait StringEnum
         static::$enumeration['names'] = $names;
     }
 
+    public static function hasFeature(string $feature): bool
+    {
+        static::setup();
+
+        return self::$enumeration['features'][$feature] ?? false;
+    }
+
+    public static function supportsFeature(string $feature): bool
+    {
+        return array_key_exists($feature, self::$enumeration['features']);
+    }
+
     /**
      * Validate all constraints defined in one enum.
      *
@@ -88,7 +116,11 @@ trait StringEnum
                 );
             }
 
-            if (self::$enumeration['undefined'] && self::$enumeration['undefined']['name']->isSame($name)) {
+            if (
+                self::hasFeature(Undefined::class)
+                &&
+                self::$enumeration['data'][Undefined::class]['name']->isSame($name)
+            ) {
                 throw Exception\Validation::undefinedConstDefined(static::class);
             }
         }
@@ -119,14 +151,31 @@ trait StringEnum
         }
 
         if (null === $enumIndex) {
-            if (self::$enumeration['undefined']) {
-                return self::$enumeration['undefined']['enum'];
+            if (self::hasFeature(Undefined::class)) {
+                return self::$enumeration['data'][Undefined::class]['enum'];
             }
 
             throw Exception\InvalidEnum::name(static::class, $name);
         }
 
         return static::cache($enumIndex);
+    }
+
+    /**
+     * Create collection of enum by names.
+     *
+     * @throws Exception\NoConstantsDefined
+     */
+    public static function byNames(string $name, string ...$names): Collection
+    {
+        array_unshift($names, $name);
+
+        $enums = [];
+        foreach($names as $name) {
+            $enums[] = self::byName($name);
+        }
+
+        return new Collection(...$enums);
     }
 
     /**
@@ -142,14 +191,31 @@ trait StringEnum
         $index = array_search($value, self::$enumeration['values']);
 
         if (false === $index) {
-            if (self::$enumeration['undefined']) {
-                return self::$enumeration['undefined']['enum'];
+            if (self::hasFeature(Undefined::class)) {
+                return self::$enumeration['data'][Undefined::class]['enum'];
             }
 
             throw Exception\InvalidEnum::value(static::class, $value);
         }
 
         return static::cache($index);
+    }
+
+    /**
+     * Create collection of enum by values.
+     *
+     * @throws Exception\NoConstantsDefined
+     */
+    public static function byValues(string $value, string ...$values): Collection
+    {
+        array_unshift($values, $value);
+
+        $enums = [];
+        foreach ($values as $value) {
+            $enums[] = self::byValue($value);
+        }
+
+        return new Collection(...$enums);
     }
 
     /**
@@ -167,14 +233,32 @@ trait StringEnum
         }
 
         if (!isset(self::$enumeration['values'][$index])) {
-            if (self::$enumeration['undefined']) {
-                return self::$enumeration['undefined']['enum'];
+            if (self::hasFeature(Undefined::class)) {
+                return self::$enumeration['data'][Undefined::class]['enum'];
             }
 
             throw Exception\InvalidEnum::index(static::class, $index);
         }
 
         return static::cache($index);
+    }
+
+    /**
+     * Create collection of enum by indexes.
+     *
+     * @throws Exception\NoConstantsDefined
+     * @throws Exception\Validation
+     */
+    public static function byIndexes(int $index, int ...$indexes): Collection
+    {
+        array_unshift($indexes, $index);
+
+        $enums = [];
+        foreach($indexes as $index) {
+            $enums[] = self::byIndex($index);
+        }
+
+        return new Collection(...$enums);
     }
 
     /**
@@ -282,8 +366,8 @@ trait StringEnum
      */
     public function name(): Name
     {
-        if (static::$enumeration['undefined'] && $this->enumerationIndex === -1) {
-            return static::$enumeration['undefined']['name'];
+        if (self::hasFeature(Undefined::class) && $this->enumerationIndex === -1) {
+            return static::$enumeration['data'][Undefined::class]['name'];
         }
 
         return static::$enumeration['names'][$this->enumerationIndex];
@@ -308,7 +392,7 @@ trait StringEnum
      */
     public function value(): string
     {
-        if (static::$enumeration['undefined'] && $this->enumerationIndex === -1) {
+        if ($this->enumerationIndex === -1 && self::hasFeature(Undefined::class)) {
             return '';
         }
 
@@ -352,12 +436,14 @@ trait StringEnum
      */
     public function equal(self $enum): bool
     {
-        if (static::$enumeration['undefined'] && $this->enumerationIndex === -1) {
-            return false;
-        }
+        if (self::hasFeature(Undefined::class)) {
+            if ($this->enumerationIndex === -1) {
+                return false;
+            }
 
-        if (static::$enumeration['undefined'] && $enum->enumerationIndex === -1) {
-            return false;
+            if ($enum->enumerationIndex === -1) {
+                return false;
+            }
         }
 
         return $this->enumerationIndex === $enum->enumerationIndex;
@@ -366,10 +452,8 @@ trait StringEnum
     /**
      * Check if current enum is equal to any of provided enums.
      */
-    public function any(self $enum1, self $enum2, self ...$enums): bool
+    public function any(self ...$enums): bool
     {
-        array_unshift($enums, $enum1, $enum2);
-
         foreach ($enums as $enum) {
             if ($this->equal($enum)) {
                 return true;

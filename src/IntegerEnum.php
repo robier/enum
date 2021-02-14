@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Robier\Enum;
 
+use Robier\Enum\Feature\Undefined;
+
 trait IntegerEnum
 {
     use StringEnum;
@@ -20,8 +22,8 @@ trait IntegerEnum
         $index = array_search($value, self::$enumeration['values'], true);
 
         if (false === $index) {
-            if (self::$enumeration['undefined']) {
-                return self::$enumeration['undefined']['enum'];
+            if (self::hasFeature(Undefined::class)) {
+                return self::$enumeration['data'][Undefined::class]['enum'];
             }
 
             throw Exception\InvalidEnum::value(static::class, $value);
@@ -33,9 +35,24 @@ trait IntegerEnum
     /**
      * @inheritDoc
      */
+    public static function byValues(int $value, int ...$values): Collection
+    {
+        array_unshift($values, $value);
+
+        $enums = [];
+        foreach($values as $value) {
+            $enums[] = self::byValue($value);
+        }
+
+        return new Collection(...$enums);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function value(): int
     {
-        if (static::$enumeration['undefined'] && $this->enumerationIndex === -1) {
+        if ($this->enumerationIndex === -1 && self::hasFeature(Undefined::class)) {
             return 0;
         }
 
@@ -69,7 +86,11 @@ trait IntegerEnum
                 );
             }
 
-            if (self::$enumeration['undefined'] && self::$enumeration['undefined']['name']->isSame($name)) {
+            if (
+                self::hasFeature(Undefined::class)
+                &&
+                self::$enumeration['data'][Undefined::class]['name']->isSame($name)
+            ) {
                 throw Exception\Validation::undefinedConstDefined(static::class);
             }
         }

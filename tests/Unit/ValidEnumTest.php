@@ -136,7 +136,7 @@ final class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allEnumerations()
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allEnumerationsWithAllNames()
      */
     public function testGettingAllEnumerations(string $className, array $allNames): void
     {
@@ -240,7 +240,7 @@ final class ValidEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allEnumerations()
+     * @dataProvider \Robier\Enum\Test\Unit\ValidDataProvider::allEnumerationsWithAllNames()
      */
     public function testRandomMethod(string $className, array $allNames): void
     {
@@ -398,5 +398,20 @@ final class ValidEnumTest extends TestCase
         $enum = $class::byName('un-defined-name');
 
         $this->assertSame('UNDEFINED', (string)$enum->name());
+    }
+
+    public function testFactoryMethodByNames(): void
+    {
+
+    }
+
+    public function testFactoryMethodByValues(): void
+    {
+
+    }
+
+    public function testFactoryMethodByIndexes(): void
+    {
+
     }
 }

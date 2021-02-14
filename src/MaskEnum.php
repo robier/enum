@@ -15,10 +15,21 @@ trait MaskEnum
      */
     private static $enumeration = [
         'initialized' => false,
-        'undefined' => null,
         'values' => [],
         'names' => [],
         'all' => 0,
+        // available features that can be enabled by using trait
+        'features' => [
+            Undefined::class => false,
+        ],
+        // some features will have some additional data, all additional data
+        // should go in this array, key needs to be feature name
+        'data' => [
+            Undefined::class => [
+                'name' => null,
+                'enum' => null,
+            ],
+        ],
     ];
 
     /**
@@ -80,8 +91,13 @@ trait MaskEnum
             throw new Exception\NoConstantsDefined(static::class);
         }
 
-        if (in_array(Undefined::class, $reflection->getTraitNames())) {
-            static::$enumeration['undefined'] = [
+        $usedTraits = $reflection->getTraitNames();
+        foreach(self::$enumeration['features'] as $feature => $_) {
+            self::$enumeration['features'][$feature] = in_array($feature, $usedTraits, true);
+        }
+
+        if (self::hasFeature(Undefined::class)) {
+            static::$enumeration['data'][Undefined::class] = [
                 'name' => new Name('UNDEFINED', 'UNDEFINED'),
                 'enum' => new static(null),
             ];
@@ -102,6 +118,18 @@ trait MaskEnum
         static::$enumeration['all'] = $all;
     }
 
+    public static function hasFeature(string $feature): bool
+    {
+        static::setup();
+
+        return self::$enumeration['features'][$feature] ?? false;
+    }
+
+    public static function supportsFeature(string $feature): bool
+    {
+        return array_key_exists($feature, self::$enumeration['features']);
+    }
+
     /**
      * @throws Exception\Validation
      */
@@ -117,7 +145,11 @@ trait MaskEnum
                 );
             }
 
-            if (self::$enumeration['undefined'] && self::$enumeration['undefined']['name']->isSame($name)) {
+            if (
+                self::hasFeature(Undefined::class)
+                &&
+                self::$enumeration['data'][Undefined::class]['name']->isSame($name)
+            ) {
                 throw Exception\Validation::undefinedConstDefined(static::class);
             }
         }
@@ -202,7 +234,7 @@ trait MaskEnum
      */
     public function value(): int
     {
-        if (static::$enumeration['undefined'] && null === $this->enumerationValue) {
+        if (null === $this->enumerationValue && self::hasFeature(Undefined::class)) {
             return 0;
         }
 
@@ -214,12 +246,14 @@ trait MaskEnum
      */
     public function equal(self $enum): bool
     {
-        if (static::$enumeration['undefined'] && null === $this->enumerationValue) {
-            return false;
-        }
+        if (self::hasFeature(Undefined::class)) {
+            if (null === $this->enumerationValue) {
+                return false;
+            }
 
-        if (static::$enumeration['undefined'] && null === $enum->enumerationValue) {
-            return false;
+            if (null === $enum->enumerationValue) {
+                return false;
+            }
         }
 
         return $this->value() === $enum->value();
@@ -230,12 +264,14 @@ trait MaskEnum
      */
     public function contains(self $enum): bool
     {
-        if (static::$enumeration['undefined'] && null === $this->enumerationValue) {
-            return false;
-        }
+        if (self::hasFeature(Undefined::class)) {
+            if (null === $this->enumerationValue) {
+                return false;
+            }
 
-        if (static::$enumeration['undefined'] && null === $enum->enumerationValue) {
-            return false;
+            if (null === $enum->enumerationValue) {
+                return false;
+            }
         }
 
         return (bool)($this->value() & $enum->value());
@@ -286,10 +322,8 @@ trait MaskEnum
     /**
      * Check if current enum contains any of provided enum values
      */
-    public function any(self $enum1, self $enum2, self ...$enums): bool
+    public function any(self ...$enums): bool
     {
-        array_unshift($enums, $enum1, $enum2);
-
         foreach ($enums as $enum) {
             if ($this->contains($enum)) {
                 return true;

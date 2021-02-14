@@ -270,11 +270,11 @@ final class ValidDataProvider
      *      [$name1, $name2...]
      *  ], ...
      */
-    public static function allEnumerations(): Generator
+    public static function allEnumerationsWithAllNames(): Generator
     {
         $currentName = null;
         $data = [];
-        foreach (static::validConstantNameAndValuePairs() as $item) {
+        foreach (static::allValidConstantNameAndValuePairs() as $item) {
             if (null === $currentName) {
                 $currentName = $item[0];
             }
@@ -302,6 +302,42 @@ final class ValidDataProvider
     /**
      * Returns array looking like:
      *  [
+     *      '$currentEnumName',
+     *      [$value1, $value2...]
+     *  ], ...
+     */
+    public static function allEnumerationsWithAllValues(): Generator
+    {
+        $currentName = null;
+        $data = [];
+        foreach (static::allValidConstantNameAndValuePairs() as $item) {
+            if (null === $currentName) {
+                $currentName = $item[0];
+            }
+
+            if ($currentName === $item[0]) {
+                $data[] = $item[2];
+
+                continue;
+            }
+
+            yield [
+                $currentName,
+                $data,
+            ];
+            $data = [$item[2]];
+            $currentName = $item[0];
+        }
+
+        yield [
+            $currentName,
+            $data,
+        ];
+    }
+
+    /**
+     * Returns array looking like:
+     *  [
      *      $currentEnumName
      *      [$name1, $name2...]
      *      [$excludedName]
@@ -309,7 +345,7 @@ final class ValidDataProvider
      */
     public static function allEnumerationsExceptOne(): Generator
     {
-        foreach (static::allEnumerations() as $item) {
+        foreach (static::allEnumerationsWithAllNames() as $item) {
             $name = array_shift($item);
             $lastItemFromArray = array_pop($item);
 
@@ -341,7 +377,7 @@ final class ValidDataProvider
      */
     public static function notEqual(): Generator
     {
-        foreach (static::allEnumerations() as $item) {
+        foreach (static::allEnumerationsWithAllNames() as $item) {
             shuffle($item[1]);
             $randomFirstItem = array_pop($item[1]);
             shuffle($item[1]);
@@ -375,7 +411,7 @@ final class ValidDataProvider
      */
     public static function isAnyPassing(): Generator
     {
-        foreach (static::allEnumerations() as $item) {
+        foreach (static::allEnumerationsWithAllNames() as $item) {
             shuffle($item[1]);
             // remove random item from array
             array_pop($item[1]);
@@ -399,7 +435,7 @@ final class ValidDataProvider
      */
     public static function isAnyNotPassing(): Generator
     {
-        foreach (static::allEnumerations() as $item) {
+        foreach (static::allEnumerationsWithAllNames() as $item) {
             shuffle($item[1]);
             $randomEnumeration = array_pop($item[1]);
 

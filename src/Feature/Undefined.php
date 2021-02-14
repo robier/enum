@@ -15,16 +15,16 @@ trait Undefined
     {
         static::setup();
 
-        return static::$enumeration['undefined']['enum'];
+        return static::$enumeration['data'][self::class]['enum'];
     }
 
     public function isUndefined(): bool
     {
         if (isMaskEnum($this)) {
-            return static::$enumeration['undefined'] && $this->enumerationValue === null;
+            return $this->enumerationValue === null;
         }
 
-        return static::$enumeration['undefined'] && $this->enumerationIndex === -1;
+        return $this->enumerationIndex === -1;
     }
 
     public function notUndefined(): bool

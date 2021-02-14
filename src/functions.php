@@ -134,3 +134,19 @@ function isMaskEnum($enum): bool
 
     return false;
 }
+
+/**
+ * @param string|object $enum
+ */
+function hasFeature($enum, string $feature): bool
+{
+    if (!isEnum($enum)) {
+        return false;
+    }
+
+    if(is_object($enum)) {
+        $enum = get_class($enum);
+    }
+
+    return call_user_func([$enum, 'hasFeature'], $feature);
+}

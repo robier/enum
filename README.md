@@ -138,7 +138,7 @@ With features, you can change enum default behaviour.
 #### Undefined
 
 By default, enums will throw an exception if you try to create one by non-existing name/value/index.
-When using **Undefined** gadget enum will allow not-existing name/value/index. Enum will be in undefined
+When using **Undefined** feature enum will allow not-existing name/value/index. Enum will be in undefined
 state. Handy if you have some legacy system that can give enum values you do not care about. Or even if 
 you are using getters, so every time you call a getter, you get a genuine object even you do not have
 real value yet.
