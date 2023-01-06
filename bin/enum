@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+use Robier\Enum\PascalCase;
+
+if (is_readable('vendor/autoload.php')) {
+    // local development
+    require_once 'vendor/autoload.php';
+} else {
+    // production
+    require_once __DIR__ . '/../../vendor/autoload.php';
+}
+
+
+$class = $argv[1];
+
+/** @var array $possibilities */
+$possibilities = $class::cases();
+
+$typehints = [];
+/** @var enum $enum */
+foreach($possibilities as $enum) {
+    $name = PascalCase::resolve($enum->name);
+    $typehints[] = "is$name()";
+    $typehints[] = "not$name()";
+}
+
+echo '/**' . "\n";
+foreach($typehints as $typehint) {
+    echo ' * @method bool ' . $typehint . "\n";
+}
+echo ' */' . "\n";
