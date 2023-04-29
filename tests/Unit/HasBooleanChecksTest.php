@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Robier\Enum\Test\Unit;
 
@@ -9,14 +9,14 @@ use Generator;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Robier\Enum\BooleanOperators
+ * @covers \Robier\Enum\HasBooleanChecks
  */
-final class BooleanOperatorsTest extends TestCase
+final class HasBooleanChecksTest extends TestCase
 {
     public function dataProvider(): Generator
     {
         yield 'Super admin' => [
-            TestEnum::SUPER_ADMIN,
+            HasBooleanChecks::SUPER_ADMIN,
             true,
             false,
             false,
@@ -24,7 +24,7 @@ final class BooleanOperatorsTest extends TestCase
         ];
 
         yield 'Admin' => [
-            TestEnum::ADMIN,
+            HasBooleanChecks::ADMIN,
             false,
             true,
             false,
@@ -32,7 +32,7 @@ final class BooleanOperatorsTest extends TestCase
         ];
 
         yield 'User' => [
-            TestEnum::USER,
+            HasBooleanChecks::USER,
             false,
             false,
             true,
@@ -40,7 +40,7 @@ final class BooleanOperatorsTest extends TestCase
         ];
 
         yield 'Client' => [
-            TestEnum::CLIENT,
+            HasBooleanChecks::CLIENT,
             false,
             false,
             false,
@@ -51,7 +51,7 @@ final class BooleanOperatorsTest extends TestCase
     /**
      * @dataProvider dataProvider()
      */
-    public function testBooleanMethodIs(TestEnum $enum, bool $isSuperAdmin, bool $isAdmin, bool $isUser, bool $isClient): void
+    public function testBooleanMethodIs(HasBooleanChecks $enum, bool $isSuperAdmin, bool $isAdmin, bool $isUser, bool $isClient): void
     {
         if ($isSuperAdmin) {
             self::assertTrue($enum->isSuperAdmin());
@@ -81,7 +81,7 @@ final class BooleanOperatorsTest extends TestCase
     /**
      * @dataProvider dataProvider()
      */
-    public function testBooleanMethodNot(TestEnum $enum, bool $isSuperAdmin, bool $isAdmin, bool $isUser, bool $isClient): void
+    public function testBooleanMethodNot(HasBooleanChecks $enum, bool $isSuperAdmin, bool $isAdmin, bool $isUser, bool $isClient): void
     {
         if ($isSuperAdmin) {
             self::assertFalse($enum->notSuperAdmin());
@@ -113,7 +113,7 @@ final class BooleanOperatorsTest extends TestCase
         self::expectException(BadMethodCallException::class);
         self::expectExceptionMessage('Not defined case in enum with name TEST');
 
-        TestEnum::CLIENT->isTest();
+        HasBooleanChecks::CLIENT->isTest();
     }
 
     public function testCallingNotDefinedNotFunctionWillThrowException(): void
@@ -121,7 +121,7 @@ final class BooleanOperatorsTest extends TestCase
         self::expectException(BadMethodCallException::class);
         self::expectExceptionMessage('Not defined case in enum with name TEST');
 
-        TestEnum::CLIENT->notTest();
+        HasBooleanChecks::CLIENT->notTest();
     }
 
     public function testCallingNotHandledMagicMethod(): void
@@ -129,26 +129,26 @@ final class BooleanOperatorsTest extends TestCase
         self::expectException(BadMethodCallException::class);
         self::expectExceptionMessage('Call to undefined function testingSomething()');
 
-        TestEnum::CLIENT->testingSomething();
+        HasBooleanChecks::CLIENT->testingSomething();
     }
 
     public function anyDataProvider(): Generator
     {
         yield 'not matching super admin with 2 other types' => [
-            TestEnum::SUPER_ADMIN,
-            [TestEnum::USER, TestEnum::CLIENT],
+            HasBooleanChecks::SUPER_ADMIN,
+            [HasBooleanChecks::USER, HasBooleanChecks::CLIENT],
             false,
         ];
 
         yield 'not matching super admin with 3 other types' => [
-            TestEnum::SUPER_ADMIN,
-            [TestEnum::USER, TestEnum::CLIENT, TestEnum::CLIENT],
+            HasBooleanChecks::SUPER_ADMIN,
+            [HasBooleanChecks::USER, HasBooleanChecks::CLIENT, HasBooleanChecks::CLIENT],
             false,
         ];
 
         yield 'matching super admin' => [
-            TestEnum::SUPER_ADMIN,
-            [TestEnum::USER, TestEnum::CLIENT, TestEnum::CLIENT, TestEnum::SUPER_ADMIN],
+            HasBooleanChecks::SUPER_ADMIN,
+            [HasBooleanChecks::USER, HasBooleanChecks::CLIENT, HasBooleanChecks::CLIENT, HasBooleanChecks::SUPER_ADMIN],
             true,
         ];
 
@@ -157,21 +157,8 @@ final class BooleanOperatorsTest extends TestCase
     /**
      * @dataProvider anyDataProvider()
      */
-    public function testAnyMethod(TestEnum $enum, array $enums, bool $expected): void
+    public function testAnyMethod(HasBooleanChecks $enum, array $enums, bool $expected): void
     {
         self::assertSame($expected, $enum->any(...$enums));
-    }
-
-    public function testRandomMethod(): void
-    {
-        self::assertInstanceOf(TestEnum::class, TestEnum::random());
-    }
-
-    public function testRandomMethodExceptAll(): void
-    {
-        self::expectException(BadMethodCallException::class);
-        self::expectExceptionMessage('All possible values are excluded');
-
-        TestEnum::random(...TestEnum::cases());
     }
 }
