@@ -49,6 +49,5 @@ Additional tools for developing:
 - `composer test` - runs all PHPUnit tests
 - `XDEBUG_MODE=coverage composer test:coverage:html` - runs all PHPUnit tests and generates HTML report
 - `composer test:infestation` - runs mutation tests and generates mutation score
-- `composer phpstan` - runs phpstan on level 8 for src folder
 
 Feel free to contribute.
