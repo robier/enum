@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Robier\Enum\Test\Unit;
 
-use Robier\Enum\BooleanOperators;
+use Robier\Enum\HasBooleanChecks as Enum;
 
 /**
  * @method bool isSuperAdmin()
@@ -16,9 +16,9 @@ use Robier\Enum\BooleanOperators;
  * @method bool isClient()
  * @method bool notClient()
  */
-enum TestEnum: int
+enum HasBooleanChecks: int
 {
-    use BooleanOperators;
+    use Enum;
 
     case SUPER_ADMIN = 1;
     case ADMIN = 2;

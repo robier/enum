@@ -19,14 +19,14 @@ $possibilities = $class::cases();
 
 $typehints = [];
 /** @var enum $enum */
-foreach($possibilities as $enum) {
+foreach ($possibilities as $enum) {
     $name = PascalCase::resolve($enum->name);
     $typehints[] = "is$name()";
     $typehints[] = "not$name()";
 }
 
 echo '/**' . "\n";
-foreach($typehints as $typehint) {
+foreach ($typehints as $typehint) {
     echo ' * @method bool ' . $typehint . "\n";
 }
 echo ' */' . "\n";

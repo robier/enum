@@ -6,7 +6,7 @@ namespace Robier\Enum;
 
 use BadMethodCallException;
 
-trait BooleanOperators
+trait HasBooleanChecks
 {
     public function __call($methodName, $arguments)
     {
@@ -46,23 +46,5 @@ trait BooleanOperators
     public function any(self ...$enums): bool
     {
         return in_array($this, $enums, true);
-    }
-
-    public static function random(self ...$except): self
-    {
-        $array = self::cases();
-
-        foreach ($except as $item) {
-            $key = array_search($item, $array);
-            unset($array[$key]);
-        }
-
-        if (empty($array)) {
-            throw new BadMethodCallException('All possible values are excluded');
-        }
-
-        $index = array_rand($array);
-
-        return $array[$index];
     }
 }
