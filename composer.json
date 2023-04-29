@@ -27,13 +27,11 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "^9",
-    "phpstan/phpstan": "^1.9"
+    "phpunit/phpunit": "^9"
   },
   "scripts": {
     "test": "phpunit --colors=always --config ./tools/phpunit.xml.dist",
-    "test:coverage:html": "@test --coverage-html ./tools/coverage",
-    "phpstan": "phpstan analyse --configuration ./tools/phpstan.neon.dist --level 8 src"
+    "test:coverage:html": "@test --coverage-html ./tools/coverage"
   },
   "config": {
     "allow-plugins": {
