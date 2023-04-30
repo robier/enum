@@ -9,12 +9,12 @@ library was changed to add "missing" features to already existing enums.
 
 Supported features:
 
-| **Name**       | **Trait**                     | **Description**                                                                                                                                                      |
-|----------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Default        | \Robier\Enum\HasDefault       | Adds 2 new methods to the enum:<br>- `try(int\|string $value, self $default): self`<br>- `tryName(string $name, self $default): self`                                |
-| Random         | \Robier\Enum\HasRandom        | Adds 1 new method:<br>- `random(self ...$exclude): self`                                                                                                             |
-| Boolean checks | \Robier\Enum\HasBooleanChecks | Every case of enum gets 2 methods. Let's say you have ADMIN_USER case in enum, then new magic methods would be:<br>- `isAdminUser():bool`<br>- `notAdminUser():bool` |
-| All            | \Robier\Enum\HasAll           | Have all already mentioned enum enhancements.                                                                                                                        |
+| **Name**       | **Trait**                     | **Description**                                                                                                                                                                                                                                                   |
+|----------------|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Default        | \Robier\Enum\HasDefault       | Adds 2 new methods to the enum:<br>- `try(int\|string $value, self $default): self`<br>- `tryName(string $name, self $default): self`                                                                                                                             |
+| Random         | \Robier\Enum\HasRandom        | Adds 1 new method:<br>- `random(self ...$exclude): self`                                                                                                                                                                                                          |
+| Boolean checks | \Robier\Enum\HasBooleanChecks | Adds 1 new method and 2 methods for every case in enum.<br>New method is ´any(self ...$test):bool´ and other methods are magic. Let's say you have ADMIN_USER case in enum, then new magic methods would be:<br>- `isAdminUser():bool`<br>- `notAdminUser():bool` |
+| All            | \Robier\Enum\HasAll           | Have all already mentioned enum enhancements.                                                                                                                                                                                                                     |
 
 When using "Boolean checks", you can easily create a dock blocks for magic functions so your IDE can be
 developer friendly.
