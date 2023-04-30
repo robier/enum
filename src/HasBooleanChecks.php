@@ -16,7 +16,7 @@ trait HasBooleanChecks
         ];
         $type = null;
 
-        foreach ($match as $key => $numberOfChars) {
+        foreach ($match as $key => $_) {
             if (str_starts_with($methodName, $key)) {
                 $type = $key;
                 break;
