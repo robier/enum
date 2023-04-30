@@ -1,3 +1,5 @@
 # coverage directory
 coverage
 .phpunit.result.cache
+infection
+infection.html
