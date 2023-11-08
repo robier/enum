@@ -34,8 +34,7 @@ final class PascalCase
                 '_',
                 '',
                 ucwords(
-                    strtolower(
-                        (string)$upperSnakeCase),
+                    strtolower((string)$upperSnakeCase),
                     '_'
                 )
             )

@@ -11,14 +11,14 @@ if (is_readable('vendor/autoload.php')) {
     require_once __DIR__ . '/../../vendor/autoload.php';
 }
 
-
 $class = $argv[1];
 
 /** @var array $possibilities */
 $possibilities = $class::cases();
 
 $typehints = [];
-/** @var enum $enum */
+
+/** @var UnitEnum $enum */
 foreach ($possibilities as $enum) {
     $name = PascalCase::resolve($enum->name);
     $typehints[] = "is$name()";
@@ -26,6 +26,7 @@ foreach ($possibilities as $enum) {
 }
 
 echo '/**' . "\n";
+
 foreach ($typehints as $typehint) {
     echo ' * @method bool ' . $typehint . "\n";
 }
